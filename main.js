@@ -94,27 +94,72 @@ const printToDom = (selector, textToPrint) => {
 };
 
 const buildDucks = (duckCollection) => {
-  let domString = '';
+  let domString = '<div class="row">';
 
   for (let i = 0; i < duckCollection.length; i++) {
     const duck = duckCollection[i];
 
     domString += `
-      <div class="duck">
-        <h1>${duck.name}</h1>
-        <img src="${duck.imageUrl}">
-        <p>Age: ${duck.age}</p>
-        <p>Size: ${duck.size}</p>
-        <p>Temerament: ${duck.temperament.toUpperCase()}</p>
+      <div class="card-seperation col-md-6 col-lg-4">
+        <div class="card duck">
+          <img src="${duck.imageUrl}" class="card-img-top rounded mx-auto d-block">
+          <div class="card-body">
+            <h5 class="card-title">${duck.name}</h5>
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item">Age: ${duck.age}</li>
+              <li class="list-group-item">Size: ${duck.size}</li>
+              <li class="list-group-item">Temperament: ${duck.temperament.toUpperCase()}</li>
+            </ul>
+          </div>
+        </div>
       </div>
     `;
   }
 
+  domString += '</div>';
+
   printToDom('#duckContainer', domString);
+};
+
+const filterDucks = (event) => {
+  const buttonId = event.target.id;
+
+  if (buttonId === 'all') {
+    buildDucks(ducks);
+    return;
+  }
+
+  const key = event.target.attributes['data-filter'].value;
+  const lilDucks = [];
+
+  for (let i = 0; i < ducks.length; i++) {
+    const duck = ducks[i];
+    if (buttonId === 'rubber' && !duck.isRubber) {
+      lilDucks.push(duck);
+      continue;
+    } 
+    
+    if (duck[key] === buttonId) {
+      lilDucks.push(duck);
+    }
+  }
+
+  buildDucks(lilDucks);
+};
+
+const clickEvents = () => {
+  document.querySelector('#small').addEventListener('click', filterDucks);
+  document.querySelector('#medium').addEventListener('click', filterDucks);
+  document.querySelector('#large').addEventListener('click', filterDucks);
+  document.querySelector('#male').addEventListener('click', filterDucks);
+  document.querySelector('#female').addEventListener('click', filterDucks);
+  document.querySelector('#rubber').addEventListener('click', filterDucks);
+  document.querySelector('#all').addEventListener('click', filterDucks);
 };
 
 const init = () => {
   buildDucks(ducks);
+  clickEvents();
 };
 
 init();
